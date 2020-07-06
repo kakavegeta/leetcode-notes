@@ -1,4 +1,4 @@
-#### Review
+### Review
 
 Firstly let's look at how to get a tree's depth.
 
@@ -14,13 +14,13 @@ As a node's state, in scenario of questions, depends on its depth, which matters
 
 
 
-#### 1302. Deepest Leaves Sum
+### 1302. Deepest Leaves Sum
 
-##### idea
+#### idea
 
 To sum up only deepest leaves, a straight way is that find maximum depth at first, storing <node, depth> information in a hash table, then sum up all nodes' values with maximum depth. But in this way we need to traverse the tree twice.  In fact we could perform updating maximum depth and summing up responding values at one traverse.
 
-##### code
+#### code
 
 ```c++
 class Solution {
@@ -51,4 +51,36 @@ public:
     }
 ```
 
- 
+
+
+### 865. Smallest Subtree with All the Deepest nodes
+
+#### idea
+
+In what condition we can confirm a deepest subtree? Define a recursive function `pair<int, TreeNode*> height(TreeNode* node)`  which returns the node's height and deepest subtree starting from this node. If `height(node->left).first == height(node->right).first`, it means that node is the root of deepest subtree we try to find. If   `height(node->left).first > height(node->right).first`, it means that deepest subtree at least rooted in node->left, and vise versa. 
+
+#### code
+
+```c++
+class Solution {
+public:
+    TreeNode* subtreeWithAllDeepest(TreeNode* root) {
+        return recur(root).second;
+    }
+    
+    pair<int, TreeNode*> height(TreeNode* root) {
+        if (!root) return {0, nullptr};
+        pair<int, TreeNode*> left = height(root->left), right = height(root->right);
+        int dl = left.first, dr = right.first;
+        // compare dl and dr:
+        // if dl == dr: return {dl+1, root}
+        // if dl > dr: return {dl+1, root->left}
+        // if dl < dr: return {dr+1, root->right}
+        return {max(dl, dr)+1, dl == dr ? root: dl > dr? left.second: right.second};
+    }
+};
+```
+
+
+
+###  

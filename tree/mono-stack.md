@@ -4,7 +4,7 @@ If you meet questions in which the order of node's values matters, in some proba
 
 
 
-### 654. Maximum Binary Tree
+###  654. Maximum Binary Tree
 
 #### idea
 
@@ -31,6 +31,42 @@ public:
 ```
 
 
+
+### 1330. Minimum Cost Tree From Leaf Value
+
+#### idea
+
+Of course we can solve this problem by dynamic programming. But another fantastic approach is greedy algorithm. Overall, we need to sum up a series of product of a pair of node values. To minimize this sum, we should try our best to minimize every product. We run a loop until no leaf node is available. In each loop, we find the minimum node, making product with its smaller neighbor, and then pop out this minimum node since it is no longer useful, and then add this product into final sum. 
+
+But it is costly to find minimum node in every loop. Here comes stack! Remember we can use stack to build an monotonic array and can thus solve next greater problem. But in this problem, we need to find next greater in two neighbors. 
+
+```c++
+class Solution {
+public:
+    int mctFromLeafValues(vector<int>& arr) {
+        stack<int> stk;
+        int ans=0;
+        
+        for (int a: arr) {
+            while (!stk.empty() && stk.top() < a) {
+                int mid = stk.top(); stk.pop();
+                // next greater in left and right neighbors. 
+                if (stk.empty()) ans += mid*a;
+                else ans += min(stk.top(), a) * mid; 
+            }
+            stk.push(a);
+        }
+        
+        while (stk.size() > 1) {
+            int n = stk.top(); stk.pop();
+            ans += n * stk.top();
+        }
+        return ans;
+    }
+};
+```
+
+ 
 
 
 
