@@ -59,6 +59,161 @@ This problem is more complicated. It can be also decomposed to next greater prob
 
 #### code
 
+```c++
+class Solution {
+public:
+    int sumSubarrayMins(vector<int>& A) {
+        int sz = A.size();
+        stack<int> prev, next;
+        vector<int> left(sz, -1), right(sz, -1);
+        
+        int mod = 1e9+7;
+        // find right-forward next smaller
+        for (int i=0; i<sz; ++i) {
+            while (!next.empty() && A[next.top()] > A[i]) {
+                int cur_idx = next.top(); next.pop();
+                right[cur_idx] = i;
+            }
+            next.push(i);
+        }
+        // find right-forward next smaller
+        for (int i=0; i<sz; ++i) {
+            while (!prev.empty() && A[prev.top()] > A[i]) {
+                prev.pop(); 
+            }
+            left[i] = prev.empty()? -1: prev.top();
+            prev.push(i);
+        }
+        
+        int ans = 0;       
+        for (int i=0; i<sz; ++i) {
+            // if left[i] == -1, then no left smaller for A[i], 
+            // the number of left greaters should be i+1
+            int l = left[i] == -1 ? -1 : left[i];
+            // if right[i] == -1, then no right smaller for A[i],
+            // the number of right greater should be sz-i
+            int r = right[i] == -1 ? sz : right[i];
+            ans = (ans + (i-l)*(r-i)*A[i]) % mod;
+        }
+        return ans;
+    }
+};
+```
+
+Or we can simply count rather than make operations on index
+
+```c++
+class Solution {
+public:
+    int sumSubarrayMins(vector<int> A) {
+        int res = 0, n = A.size(), mod = 1e9 + 7;
+        vector<int> left(n), right(n);
+        stack<pair<int, int>> s1,s2;
+        for (int i = 0; i < n; ++i) {
+            int count = 1;
+            while (!s1.empty() && s1.top().first > A[i]) {
+                count += s1.top().second;
+                s1.pop();
+            }
+            s1.push({A[i], count});
+            left[i] = count;
+        }
+        for (int i = n - 1; i >= 0; --i) {
+            int count = 1;
+            while (!s2.empty() && s2.top().first >= A[i]) {
+                count += s2.top().second;
+                s2.pop();
+            }
+            s2.push({A[i], count});
+            right[i] = count;
+        }
+        for (int i = 0; i < n; ++i)
+            res = (res + A[i] * left[i] * right[i]) % mod;
+        return res;
+    }
+};
+```
+
+Let's see more complicated problems
+
+### [84. Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram/)
+
+#### idea
+
+It is almost same as 907. The only difference emerges in the calculation returned. In this problem, we should plus the left-forward length and right-forward length, rather than multiply.
+
+#### code
+
+```c++
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        stack<int> stk_next, stk_prev;
+        
+        int n = heights.size();
+        
+        vector<int> next_lesser(n, -1);
+        vector<int> prev_lesser(n, -1);
+        for (int i=0; i<n; ++i) {
+            while (!stk_next.empty() && heights[stk_next.top()] > heights[i]) {
+                int cur = stk_next.top(); stk_next.pop();
+                next_lesser[cur] = i;
+            }     
+            stk_next.push(i);
+        }
+        
+        for (int i=0; i<n; ++i) {
+            while (!stk_prev.empty() && heights[stk_prev.top()] > heights[i]) {
+                stk_prev.pop();
+            }     
+            prev_lesser[i] = stk_prev.empty()? -1: stk_prev.top();
+            stk_prev.push(i);
+        }
+        
+        int ans = 0;
+        for (int i=0; i<n; ++i) {
+            int nl_idx = next_lesser[i] == -1 ? n: next_lesser[i];
+            int pl_idx = prev_lesser[i] == -1 ? -1: prev_lesser[i];
+            // only differ here with 907
+            ans = max(ans, heights[i]*(nl_idx-pl_idx-1)); 
+        }
+        return ans;
+    }
+};
+```
+
+But let's see a more beautiful solution due to [sipiprotoss5](https://leetcode.com/problems/largest-rectangle-in-histogram/discuss/28905/My-concise-C%2B%2B-solution-AC-90-ms).  Super Awesome! The basic idea of following solution is that for a number x, its previous greater number's index has already been stored in a increasing stack, therefore we can do all operations in one for loop. 
+
+```c++
+class Solution {
+public:
+    int largestRectangleArea(vector<int> &height) {
+        stack<int> stk;
+        height.push_back(0);
+        int n = height.size();
+        int ans = 0;
+        
+        for (int i=0; i<n; ++i) {
+            while(!stk.empty() and height[stk.top()] >= height[i]) {
+                int mid = stk.top(); stk.pop();
+                int h = height[mid];
+                int pre = stk.empty()? -1: stk.top();
+                int next = i;
+                ans = max(ans, h*(next-pre-1));
+            }
+            stk.push(i);
+        }
+        return ans;
+    }
+};
+```
+
+
+
+### [85. Maximal Rectangle](https://leetcode.com/problems/maximal-rectangle/)
+
+#### idea
+
 
 
 
