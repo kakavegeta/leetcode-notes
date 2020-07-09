@@ -208,13 +208,46 @@ public:
 };
 ```
 
-
-
 ### [85. Maximal Rectangle](https://leetcode.com/problems/maximal-rectangle/)
 
 #### idea
 
+Draw an test case on paper. From bottom to top row, you can easily recognize that, if treating "1" columns as histogram,  this problem is totally same as the previous one, except that now you need to calculate height by self, which is very simple. Overall, you might only need one more line:
 
+#### code
 
+```c++
+class Solution {
+public:
+    int maximalRectangle(vector<vector<char>>& A) {
+        int m = A.size();
+        if (m == 0) return 0;
+        int n = A[0].size();
+        
+        vector<int> height(n+1, 0);
+        int ans = 0;
+        for (int i=0; i<m; ++i) {
+            stack<int> stk;
+            for (int j=0; j<=n; ++j) {
+                // calculate height
+                if (j <= n-1) height[j] = A[i][j]=='1'? height[j]+1: 0;
+                while(!stk.empty() && height[stk.top()] > height[j]) {
+                    int h = height[stk.top()]; stk.pop();
+                    int l = stk.empty()? -1: stk.top();
+                    ans = max(ans, h*(j-l-1));
+                }
+                stk.push(j);
+            }            
+        }
+        return ans;   
+    }
+};
+```
 
+Move on, let's see a variant problem
 
+### [1504. Count Submatrices With All Ones](https://leetcode.com/problems/count-submatrices-with-all-ones/)
+
+#### idea
+
+Still same essence. Only difference between 1504 and 85 is that we need to sum up all rectangle area instead of get maximum one. 
