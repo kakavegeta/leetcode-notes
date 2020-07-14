@@ -36,3 +36,33 @@ public:
 
 
 
+### [42. Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/)
+
+#### idea
+
+The basic idea is simple: for position `i`, find its left-greatest and right-greatest, then pick the smaller of the two as `h`, then `h - height[i]` is the greatest volume `i` can store. Sum up each position's greatest volume.
+
+```c++
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int n = height.size();
+        if (n==0) return 0; 
+        
+        int l = 0, r = n-1;
+        int lmx = height[l], rmx = height[r]; 
+        int ans = 0; 
+        while (l < r) {
+            if (lmx < rmx) {
+                ans += lmx - height[l++];
+                lmx = max(lmx, height[l]);
+            } else {
+                ans += rmx - height[r--];
+                rmx = max(rmx, height[r]);
+            }       
+        }
+        return ans;
+    }
+};
+```
+
