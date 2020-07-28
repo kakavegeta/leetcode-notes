@@ -46,3 +46,35 @@ public:
 };
 ```
 
+Just get another simpler and cooler code from [Lin](https://www.youtube.com/watch?v=izGTqs-4y-I&t=194s) . Same idea but more clean way. 
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> adj;
+    vector<int> cnt;
+    vector<int> ans;
+    string lbs;
+    void dfs(int u, int p) {
+        // previous level's count, must be substracted at end.
+        int c = cnt[lbs[u]-'a']++;
+        for (int v: adj[u]) 
+            if (v != p) dfs(v, u);
+        ans[u] = cnt[lbs[u]-'a']-c; 
+    }
+    vector<int> countSubTrees(int n, vector<vector<int>>& edges, string labels) {
+        adj = vector<vector<int>>(n);
+        lbs = labels;
+        cnt = vector<int>(26, 0);
+        ans = vector<int>(n, 0);
+        
+        for (auto& e: edges) {
+            adj[e[0]].push_back(e[1]);
+            adj[e[1]].push_back(e[0]);
+        }
+        
+        dfs(0, -1);
+        return ans;
+    }
+```
+
