@@ -14,8 +14,10 @@ public:
     int firstMissingPositive(vector<int>& nums) {
         int n = nums.size(); 
         for (int i = 0; i<n; ++i) {
-            // most significant part in this approach. For each index i and nums[i], we want to put nums[i] to position nums[i]-1.
-            // therefore, we use a while loop to achieve this until 1) nums[i]<=0, or 2) nums[i]>=n or, 3) nums[i] in its 'correct' position 
+            // most significant part in this approach. For each index i and nums[i], 
+            // we want to put nums[i] to position nums[i]-1.
+            // therefore, we use a while loop to achieve this until 1) nums[i]<=0, or 2) nums[i]>=n or, 
+            // 3) nums[i] in its 'correct' position 
             while (nums[i]>0 && nums[i] <= n && nums[i] != nums[nums[i]-1]) {
                 swap(nums[nums[i]-1], nums[i]);
             }
