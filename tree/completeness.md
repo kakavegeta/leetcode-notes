@@ -65,3 +65,77 @@ public:
 
 Notice that many binary tree design problem can be solve with queue, deque, or vector
 
+#### queue
+
+```c++
+class CBTInserter {
+public:
+    TreeNode* head;
+    queue<TreeNode*> q;
+    CBTInserter(TreeNode* root) {
+        head = root;
+        if (root) q.push(root);
+        while (!q.empty()) {
+            TreeNode* cur = q.front();
+            if (!cur->right || !cur->left) break;
+            q.push(cur->left);
+            q.push(cur->right);
+            q.pop();
+        }
+    }
+    
+    int insert(int v) {
+        TreeNode* node = new TreeNode(v);
+        TreeNode* p = q.front();
+        if (p->left) {
+            p->right = node;
+            q.push(p->left);
+            q.push(p->right);
+            q.pop();
+        } else {
+            p->left = node;
+        }
+        return p->val;      
+    }   
+    TreeNode* get_root() {
+        return head;
+    }
+};
+```
+
+#### vector
+
+Complete binary tree can be represented as array, and the index can reflect the relations of parent and children. Remember heap? its implementation is array.
+
+```c++
+class CBTInserter {
+public:
+    vector<TreeNode*> tree;
+    CBTInserter(TreeNode* root) {
+        // make root as index 1
+        tree.push_back(nullptr);
+        tree.push_back(root);
+        for (int i=1; i<tree.size(); ++i) {
+            if (tree[i]->left) tree.push_back(tree[i]->left);
+            if (tree[i]->right) tree.push_back(tree[i]->right);
+        }
+    }
+    
+    int insert(int v) {
+        TreeNode* node = new TreeNode(v);
+        tree.push_back(node);
+        int last_idx = tree.size()-1;
+        if (last_idx % 2 == 0) {
+            tree[last_idx/2]->left = node;
+        } else {
+            tree[last_idx/2]->right = node;
+        }
+        return tree[last_idx/2]->val;
+    }
+    
+    TreeNode* get_root() {
+        return tree[1];
+    }
+};
+```
+
