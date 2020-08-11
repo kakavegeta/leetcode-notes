@@ -11,13 +11,28 @@ if d[v] > d[u] + w(u, v):
 	parent[v] = u
 ```
 
+And there is a simple proof that the relaxation algorithm maintains the invariant that d(v) >= S(s, v), where d(v) is the current shortest path from starting vertex s, and S(s, v) is the eventual shortest path from s to v:
+
+Proof: 
+Start with d(u) >= S(s, u). By triangle rule, S(s, v) <= S(s, u) + S(u, v), 
+
+thus S(s, v) <= d(u) + w(u, v) since S(s, u) <= d(u) and S(u, v) <= w(u, v);
+
+By relaxation setting d(v) as d(u) + w(u, v), we can safely reach  d(v) >= S(s, v).
+
+Done~ 
+
+In this [notes](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/lecture-videos/MIT6_006F11_lec16.pdf), you see the DAGs parts. This algorithm is not subsumed by Dijkstra. This algorithm, basically dynamic programming approach, can handle negative edges but not cycles. Instead, Dijkstra can handle cycles but not negative edges. Bellman-Ford kind of combines both.  The reason, at least to some extent,  that Bellman-Ford can handle negative edges and cycle at same time is that it employs dynamic programming approach, whereas Dijkstra employs greedy algorithm~
+
+
+
 There are some videos I think kind of illustrative:
 
 [Dijkstra](https://www.youtube.com/watch?v=GazC3A4OQTE)
 
 [Bellman-Ford](https://www.youtube.com/watch?v=obWXjtg0L64)
 
-Note: if you can tell the difference between Dijkstra and Bellman-Ford, you might get the essence of the two algorithms. Generally speaking, Dijkstra update each 
+
 
 ### [1514. Path with Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/) 
 
