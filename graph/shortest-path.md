@@ -17,7 +17,7 @@ There are some videos I think kind of illustrative:
 
 [Bellman-Ford](https://www.youtube.com/watch?v=obWXjtg0L64)
 
-Note: if you can tell the difference between Dijkstra and Bellman-Ford, you might get the essence of the two algorithms. Generally speaking, Dijkstra update each 
+
 
 ### [1514. Path with Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/) 
 
@@ -96,5 +96,122 @@ public:
 
 
 
+### [787. Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops/)
 
+#### Dijkstra
+
+one excellent explanation why we do not use relaxation:
+
+Some explanation.
+The key difference with the classic Dijkstra algo is, we don't maintain the global optimal distance to each node, i.e. ignore below optimization:
+`alt ← dist[u] + length(u, v)`
+`if alt < dist[v]:`
+Because there could be routes which their length is shorter but pass more stops, and those routes don't necessarily constitute the best route in the end. To deal with this, rather than maintain the optimal routes with 0..K stops for each node, the solution simply put all possible routes into the priority queue, so that all of them has a chance to be processed. IMO, this is the most brilliant part.
+And the solution simply returns the first qualified route, it's easy to prove this must be the best route.
+
+
+
+```c++
+typedef tuple<int, int, int> ti;
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) {
+        vector<int> dist(n, INT_MAX);
+        
+        vector<vector<pair<int, int>>> graph(n);
+        for (auto &flight: flights) {
+            graph[flight[0]].push_back({flight[1], flight[2]});
+        }
+        
+        priority_queue<ti, vector<ti>, greater<ti>> pq;
+        
+        pq.push({0, src, 0});
+        dist[src] = 0;
+        
+        while (!pq.empty()) {
+            auto [du, u, depth] = pq.top(); pq.pop();
+            
+            if (u == dst) return du;
+            if (depth == K+1) continue;
+            for (auto& p: graph[u]) {
+                auto [v, w] = p;
+                // there, we do no relaxation. 
+                pq.push({du+w, v, depth+1});
+            }
+        }
+        return -1;
+    }
+};
+```
+
+#### BFS
+
+Similar to Dijkstra, but use queue instead of priority queue
+
+```c++
+class Solution {
+public:
+    vector<vector<pair<int, int>>> graph;
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) {
+        graph = vector<vector<pair<int, int>>>(n);
+        for (auto & flight: flights) {
+            graph[flight[0]].push_back({flight[1], flight[2]});
+        }
+        int ans = INT_MAX;
+        
+        queue<pair<int, int>> q;
+        q.push({src, 0});
+        
+        while (!q.empty() && K+1>=0) {
+            int sz = q.size();
+            while (sz--) {
+                auto [u, du] = q.front(); q.pop();
+                if (u == dst) ans = min(ans, du);
+                for (auto [v, w]: graph[u]) {
+                    if (du + w > ans) continue; // prunning, important!
+                    q.push({v, du+w});
+                }
+            }
+            K--;
+        }
+        return ans == INT_MAX? -1: ans;
+    }
+};
+```
+
+#### DFS
+
+```c++
+typedef pair<int, int> pi;
+class Solution {
+public:
+    vector<vector<pi>> graph;
+    vector<int> visited;
+    int ans;
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) {
+        graph = vector<vector<pi>>(n);
+        ans = INT_MAX;
+        visited = vector<int>(n, 0); 
+        visited[src] = 1;
+        for (auto& flight: flights) {
+            graph[flight[0]].push_back({flight[1], flight[2]});
+        }
+        
+        dfs(src, dst, 0, K+1);
+        return ans == INT_MAX? -1: ans;
+    }
+    
+    void dfs(int src, int dst, int dsrc, int stops) {
+        if (src == dst) {ans = dsrc; return;}
+        if (stops == 0) return;
+        for (auto& [v, ww]: graph[src]) {
+            if (visited[v] == 1 || dsrc + ww > ans) continue; // prunning!
+            visited[v] = 1;
+            dfs(v, dst, dsrc+ww, stops-1);
+            visited[v] = 0;
+        }
+        
+    }  
+};
+```
 
