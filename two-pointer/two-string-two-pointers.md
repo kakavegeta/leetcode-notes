@@ -8,7 +8,7 @@ Generally, two pointers problem need to employ two pointers on single array or s
 
 #### idea
 
-Stack is suitable there. But follow up asks O(1) space: we should not use extra space. So you see, two pointers trick cannot only reduce time complexity but also space complexity. The tricky spot is here: since # implies backspace operation, if we iterate from front to back, when we meet a non-# character, we cannot know whether such character should be deleted, so we need extra space to record the state. But wait, what if we iterate from back to front? In this way, when we meet non-# character, we can easily judge whether it should be deleted by a variable which count the number of # remain. 
+Stack is suitable there. But follow up asks O(1) space: we should not use extra space. So you see, two pointers trick can not only reduce time complexity but also space complexity. The tricky spot is here: since # implies backspace operation, if we iterate from front to back, when we meet a non-# character, we cannot know whether such character should be deleted, so we need extra space to record the state. But wait, what if we iterate from back to front? In this way, when we meet non-# character, we can easily judge whether it should be deleted by a variable which count the number of # remain. 
 
 #### code
 

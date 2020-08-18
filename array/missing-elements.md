@@ -32,3 +32,25 @@ public:
 
 
 
+### [1539. Kth Missing Positive Number](https://leetcode.com/problems/kth-missing-positive-number/)
+
+Using Set is easy. However, it can be solved with binary search!
+
+Firstly, we need to know one thing: for an such sorted array A, before index m, there must be A[m]-(m+1) missing positive number. More importantly, f(m) = A[m]-(m+1)  is an non-decreasing function! That's why we can use binary search here. Therefore, we need to find minimum m such that A[m]-(m+1) >= k. Before m, there must be at least k missing numbers. As result, we need to return m+k, because m is the number of  missing number used. 
+
+```c++
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) {
+        int lo = 0, hi = arr.size()-1;
+        int mid; 
+        while (lo <= hi) {
+            mid = lo + (hi-lo)/2;
+            if (arr[mid]-(mid+1) >= k) hi = mid-1;
+            else lo = mid+1; 
+        }       
+        return lo+k;
+    }
+};
+```
+
